@@ -4,20 +4,19 @@ import os
 import requests
 from requests.models import PreparedRequest
 
-client_id = os.environ.get('CLIENT_ID')
-client_secret = os.environ.get('CLIENT_SECRET')
-
-auth_url = 'https://id.twitch.tv/oauth2/token'
-videos_url = 'https://api.twitch.tv/helix/videos'
+twitch_auth_url = 'https://id.twitch.tv/oauth2/token'
+twitch_client_id = os.environ.get('TWITCH_CLIENT_ID')
+twitch_client_secret = os.environ.get('TWITCH_CLIENT_SECRET')
+twitch_search_url = 'https://api.twitch.tv/helix/videos'
 
 youtube_search_url = 'https://youtube.googleapis.com/youtube/v3/search'
 youtube_key = os.environ.get('YOUTUBE_KEY')
 
 
-def get_oauth_token():
+def get_twitch_token():
     response = requests.post(
-        auth_url,
-        data={'client_id': client_id, 'client_secret': client_secret,
+        twitch_auth_url,
+        data={'client_id': twitch_client_id, 'client_secret': twitch_client_secret,
               'grant_type': 'client_credentials'},
         headers={'Content-Type': 'application/x-www-form-urlencoded'}
     )
@@ -25,17 +24,18 @@ def get_oauth_token():
     return json_response['access_token']
 
 
-def get_videos(token):
+def get_latest_twitch_vod():
+    twitch_token = get_twitch_token()
     params = {'user_id': '21841789', 'type': 'archive'}
     req = PreparedRequest()
-    req.prepare_url(videos_url, params)
+    req.prepare_url(twitch_search_url, params)
     response = requests.get(req.url, headers={
-                            'Client-Id': client_id, 'Authorization': 'Bearer {}'.format(token)})
+                            'Client-Id': twitch_client_id, 'Authorization': 'Bearer {}'.format(twitch_token)})
     json_response = json.loads(response.text)
     return json_response['data']
 
 
-def get_current_videos():
+def get_latest_youtube_vod():
     params = {'part': 'snippet', 'channelId': 'UCyclX6ZQCOXunEg4Z7EA8fw',
               'maxResults': '1', 'order': 'date', 'key': youtube_key}
     req = PreparedRequest()
@@ -44,12 +44,10 @@ def get_current_videos():
     return json.loads(response.text)
 
 
-token = get_oauth_token()
-videos = get_videos(token)
-# print(videos[0])
-
-latest_nmp = get_current_videos()
-print(latest_nmp)
+latest_twitch_vod = get_latest_twitch_vod()
+latest_youtube_vod = get_latest_youtube_vod()
+print(latest_twitch_vod)
+print(latest_youtube_vod)
 
 # get latest twitch vod
 # get latest youtube vod
