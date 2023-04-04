@@ -32,7 +32,7 @@ def get_latest_twitch_vod():
     response = requests.get(req.url, headers={
                             'Client-Id': twitch_client_id, 'Authorization': 'Bearer {}'.format(twitch_token)})
     json_response = json.loads(response.text)
-    return json_response['data']
+    return json_response
 
 
 def get_latest_youtube_vod():
@@ -45,10 +45,10 @@ def get_latest_youtube_vod():
 
 
 latest_twitch_vod = get_latest_twitch_vod()
-latest_youtube_vod = get_latest_youtube_vod()
-print(latest_twitch_vod)
-print(latest_youtube_vod)
+latest_twitch_title = latest_twitch_vod['data'][0]['title']
 
-# get latest twitch vod
-# get latest youtube vod
-# if mismatch twitch download twitch vod
+latest_youtube_vod = get_latest_youtube_vod()
+latest_youtube_title = latest_youtube_vod['items'][0]['snippet']['title']
+
+if (latest_twitch_title != latest_youtube_title):
+    print('New twitch vod! pog!')
