@@ -2,3 +2,4 @@ env/
 .env
 vods
 chats
+node_modules

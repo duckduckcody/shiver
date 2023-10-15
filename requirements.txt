@@ -1,2 +1,2 @@
 requests
-moviepy
+python-dotenv
