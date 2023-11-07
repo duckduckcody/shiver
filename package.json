@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "dotenv": "^16.3.1",
     "editly": "^0.14.2"
   },
   "type": "module"
